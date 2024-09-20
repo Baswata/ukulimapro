@@ -15,11 +15,11 @@ app.use(express.static(path.join(__dirname,'public')));
 const authRoutes = require('./routes/auth');
 const serviceRoutes = require('./routes/service');
 
-app.use('/auth', authRoutes);
-app.use('/services', serviceRoutes);
+app.use('/api/auth', authRoutes);
+app.use('/api/services', serviceRoutes);
 
 app.get('/', (req, res) => {
-    res.sendFile(path.join(__dirname,'public','html','lodin.html'));
+    res.sendFile(path.join(__dirname,'public','html','login.html'));
 });
 app.get('/register', (req,res) => {
     res.sendFile(path.join(__dirname,'public','html','register.html'));

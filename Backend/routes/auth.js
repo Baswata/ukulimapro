@@ -3,7 +3,7 @@ const bcrypt = require ('bcryptjs');
 const db = require ('../db');
 const router = express.Router();
 
-router.post('/register', async (req,res) => {
+router.post('public/register.html', async (req,res) => {
     const {fullname, email, username, password} = req.body;
     const hashedPassword = await bcrypt.hash (req.body.password,(10));
     const query = 'INSERT INTO  users (fullname, email, username, password) VALUES(?,?,?,?)';
@@ -18,7 +18,7 @@ router.post('/register', async (req,res) => {
     });
 });
 
-router.post('/login', (req, res) => {
+router.post('public\login.html', (req, res) => {
     const{username,password} = req.body;
     const query = `SELECT * FROM users WHERE username =?`;
     db.query(query, [username], async (err,results) => {
