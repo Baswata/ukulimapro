@@ -23,11 +23,14 @@ app.get('/login', (req, res) => {
     res.sendFile(path.join(__dirname, '..', 'public', 'login.html'));
 });
 app.get('/register', (req, res) => {
-    res.sendFile(path.join(__dirname, '..', 'public', 'register.html')); // Updated path
+    res.sendFile(path.join(__dirname, '..', 'public', 'register.html')); 
 });
 app.get('/services', (req, res) => {
     res.sendFile(path.join(__dirname, '..', 'public', 'service_directory.html'));
 });
+app.get('/home', (req,res) => {
+    res.sendFile(path.join(__dirname, '..', 'public', 'index.html'));
+})
 
 app.listen(5000,() => {
     console.log('Server is okay and running!')

@@ -1,51 +1,72 @@
 const express = require('express');
 const bcrypt = require('bcryptjs');
 const jwt = require('jsonwebtoken');
-const db = require('../db'); // Your database connection
+const db = require('../db');
+require('dotenv').config();
 
 const router = express.Router();
-const JWT_SECRET = process.env.JWT_SECRET; // Ensure this is set in your environment variables
+const JWT_SECRET = process.env.JWT_SECRET;
+
+if (!JWT_SECRET) {
+    throw new Error('JWT_SECRET is not defined in environment variables');
+}
 
 // Registration Route
 router.post('/register', async (req, res) => {
     const { fullname, email, username, password } = req.body;
-
+    
     try {
+        console.log("Received registration request:", fullname, email, username);
+
         // Check if the user already exists
         const existingUser = await new Promise((resolve, reject) => {
             const query = 'SELECT * FROM users WHERE email = ? OR username = ?';
             db.query(query, [email, username], (err, results) => {
-                if (err) return reject(err);
+                if (err) {
+                    console.error("Error querying database for existing user:", err);
+                    return reject(err);
+                }
                 resolve(results);
             });
         });
 
         if (existingUser.length > 0) {
-            return res.status(400).json({ message: 'User already exists.' });
+            console.log("User already exists with email or username.");
+            return res.status(400).json({ success: false, message: 'User already exists.' });
         }
 
         // Hash the password
         const hashedPassword = await bcrypt.hash(password, 10);
+        console.log("Password hashed successfully.");
 
         // Insert new user into the database
         const query = 'INSERT INTO users (fullname, email, username, password) VALUES (?, ?, ?, ?)';
         await new Promise((resolve, reject) => {
             db.query(query, [fullname, email, username, hashedPassword], (err) => {
-                if (err) return reject(err);
+                if (err) {
+                    console.error("Error inserting user into the database:", err);
+                    return reject(err);
+                }
                 resolve();
             });
         });
 
-        res.status(201).json({ message: 'User registered successfully.' });
+        console.log("User registered successfully.");
+        res.status(201).json({ success: true, message: 'User registered successfully.' });
     } catch (err) {
-        console.error('Registration error:', err);
-        res.status(500).json({ message: 'Server error' });
+        console.error("Registration error:", err);
+        res.status(500).json({ success: false, message: 'Server error' });
     }
 });
+
 
 // Login Route
 router.post('/login', async (req, res) => {
     const { username, password } = req.body;
+
+    if (!username || !password) {
+        return res.status(400).json({ message: 'Both username and password are required' });
+    }
 
     try {
         // Find the user by username
@@ -58,13 +79,13 @@ router.post('/login', async (req, res) => {
         });
 
         if (!user) {
-            return res.status(400).json({ message: 'Invalid username or password.' });
+            return res.status(401).json({ message: 'Invalid credentials' });
         }
 
         // Compare password
         const isMatch = await bcrypt.compare(password, user.password);
         if (!isMatch) {
-            return res.status(400).json({ message: 'Invalid username or password.' });
+            return res.status(401).json({ message: 'Invalid credentials' });
         }
 
         // Generate a token
