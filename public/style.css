@@ -1,62 +1,131 @@
+
 body {
     font-family: Arial, Helvetica, sans-serif;
-    background-color: rgb(124, 227, 227); 
+    background-color: rgb(124, 227, 227);
     margin: 0;
     padding: 0;
 }
 
-h2 {
+
+h2, h3 {
     font-weight: bold;
-    color: teal; 
-    text-align: center; 
-    margin-top: 20px; 
+    color: teal;
+    text-align: center;
+    margin-top: 20px;
 }
+
 
 nav {
     text-align: center;
-    color: teal; 
-    text-decoration: none; 
+    color: teal;
     display: flex;
-    justify-content: center; 
+    justify-content: center;
     font-family: Georgia, 'Times New Roman', Times, serif;
-    margin: 20px 0; 
-    padding: 10px; 
+    margin: 20px 0;
+    padding: 10px;
 }
+
+nav a {
+    color: teal; 
+    text-decoration: none;
+    margin: 0 15px; 
+    font-weight: bold;
+}
+
+nav a:hover {
+    text-decoration: underline; 
+}
+
+
+.main-content {
+    display: flex;
+    justify-content: space-between;
+    padding: 20px;
+}
+
+
+#testimonials,
+#contacts {
+    flex: 1; 
+    margin: 10px; 
+    background-color: white;
+    padding: 20px;
+    border: 1px solid teal;
+    border-radius: 8px;
+    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.2);
+}
+
 
 .register-form,
 .login-form {
     text-align: center;
     box-sizing: border-box;
-    margin: 0 auto; 
+    margin: 20px auto; 
     padding: 20px;
-    border: 1px solid teal; 
+    border: 1px solid teal;
     border-radius: 8px;
-    width: 300px;
-    background-color: white; 
-    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1); 
+    width: 90%; 
+    max-width: 400px; 
+    background-color: white;
+    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.2); 
 }
+
 
 input[type="text"],
 input[type="password"],
 input[type="email"] {
-    width: 90%; 
-    padding: 10px; 
-    margin: 10px 0; 
-    border: 1px solid teal; 
-    border-radius: 5px; 
+    width: 100%; 
+    padding: 10px;
+    margin: 10px 0;
+    border: 1px solid teal;
+    border-radius: 5px;
+    transition: border-color 0.3s; 
+
+input:focus {
+    border-color: darkcyan; 
+    outline: none;
 }
+
 
 button {
     background-color: teal;
-    color: white; 
+    color: white;
     padding: 10px 15px;
-    border: none; 
-    border-radius: 5px; 
-    cursor: pointer; 
-    transition: background-color 0.3s; 
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+    transition: background-color 0.3s, transform 0.2s;
 }
 
 button:hover {
-    background-color: red; 
+    background-color: red;
+    transform: scale(1.05);
 }
 
+
+@media (max-width: 600px) {
+    h2 {
+        font-size: 1.5em; 
+    }
+
+    nav a {
+        margin: 0 10px;
+    }
+
+    .main-content {
+        flex-direction: column; 
+    }
+
+    #testimonials,
+    #contacts {
+        margin: 10px 0; 
+        width: 95%; 
+    }
+}
+}
+img {
+    max-width: 20%; /* Makes image responsive */
+    height: auto;    /* Keeps aspect ratio */
+    display: block;  /* Centers the image */
+    margin: 0 auto;  /* Centers the image horizontally */
+}
