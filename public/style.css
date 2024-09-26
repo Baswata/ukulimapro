@@ -124,8 +124,8 @@ button:hover {
 }
 }
 img {
-    max-width: 20%; /* Makes image responsive */
-    height: auto;    /* Keeps aspect ratio */
-    display: block;  /* Centers the image */
-    margin: 0 auto;  /* Centers the image horizontally */
+    max-width: 20%; 
+    height: auto;    
+    display: block;
+    margin: 0 auto; 
 }

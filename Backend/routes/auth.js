@@ -10,6 +10,21 @@ const JWT_SECRET = process.env.JWT_SECRET;
 if (!JWT_SECRET) {
     throw new Error('JWT_SECRET is not defined in environment variables');
 }
+const verifyToken = (req, res, next) => {
+    const token = req.headers['authorization']?.split(' ')[1];
+    
+    if (!token) {
+        return res.status(401).json({ message: 'No token provided' });
+    }
+    
+    jwt.verify(token, JWT_SECRET, (err, decoded) => {
+        if (err) {
+            return res.status(403).json({ message: 'Failed to authenticate token' });
+        }
+        req.userId = decoded.id;
+        next();
+    });
+};
 
 // Registration Route
 router.post('/register', async (req, res) => {
@@ -61,39 +76,47 @@ router.post('/register', async (req, res) => {
 
 
 // Login Route
+
 router.post('/login', async (req, res) => {
     const { username, password } = req.body;
-
+    
+    // Check if both username and password are provided
     if (!username || !password) {
         return res.status(400).json({ message: 'Both username and password are required' });
     }
 
     try {
-        // Find the user by username
+        const userQuery = 'SELECT * FROM users WHERE username = ?';
         const user = await new Promise((resolve, reject) => {
-            const query = 'SELECT * FROM users WHERE username = ?';
-            db.query(query, [username], (err, results) => {
-                if (err) return reject(err);
-                resolve(results[0]);
+            db.query(userQuery, [username], (err, results) => {
+                if (err) {
+                    console.error('Database query error:', err); // Log DB errors
+                    return reject(err);
+                }
+                resolve(results[0]); 
             });
         });
 
+        // Check if the user exists
         if (!user) {
+            console.log('User not found:', username); // Log user not found
             return res.status(401).json({ message: 'Invalid credentials' });
         }
 
-        // Compare password
+        // Compare provided password with the stored hash
         const isMatch = await bcrypt.compare(password, user.password);
         if (!isMatch) {
+            console.log('Password mismatch for user:', username); // Log password mismatch
             return res.status(401).json({ message: 'Invalid credentials' });
         }
 
-        // Generate a token
+        // Create JWT token
         const token = jwt.sign({ id: user.id }, JWT_SECRET, { expiresIn: '1h' });
-
+        
+        // Send success response with token and user info
         res.status(200).json({ token, user: { id: user.id, username: user.username } });
     } catch (err) {
-        console.error('Login error:', err);
+        console.error('Login error:', err); // Log any other errors
         res.status(500).json({ message: 'Server error' });
     }
 });
