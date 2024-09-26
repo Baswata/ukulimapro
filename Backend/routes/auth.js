@@ -76,7 +76,6 @@ router.post('/register', async (req, res) => {
 
 
 // Login Route
-
 router.post('/login', async (req, res) => {
     const { username, password } = req.body;
     
@@ -90,7 +89,7 @@ router.post('/login', async (req, res) => {
         const user = await new Promise((resolve, reject) => {
             db.query(userQuery, [username], (err, results) => {
                 if (err) {
-                    console.error('Database query error:', err); // Log DB errors
+                    console.error('Database query error:', err); 
                     return reject(err);
                 }
                 resolve(results[0]); 
